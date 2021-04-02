@@ -1,0 +1,35 @@
+version: '3'
+services:
+    react-native-docker:
+        build: 
+            context: ./frontend
+            dockerfile: ./Dockerfile
+        ports:
+            - 8081:4100
+        volumes:
+            - ./frontend:/conduit/frontend
+            - frontend_node_modules:/conduit/frontend/node_modules
+
+    node-express:
+        build: 
+            context: ./backend
+            dockerfile: ./Dockerfile
+            args: 
+                - SETTINGS=docker
+        ports:
+            - 8080:3000
+        volumes:
+            - ./backend:/conduit/backend
+            - backend_node_modules:/conduit/backend/node_modules
+        depends_on:
+            - mongodb
+
+    mongodb:
+        image : mongo
+        container_name: mongodb
+        ports:
+            - 27017:27017
+
+volumes: 
+    frontend_node_modules:
+    backend_node_modules:
